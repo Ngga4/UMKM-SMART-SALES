@@ -20,8 +20,9 @@ import { createPortal } from "react-dom";
 /* ----------------------------------------------------------------
    Constants
    ---------------------------------------------------------------- */
-const HISTORY_API_URL = "http://localhost:8000/api/history";
-const ANALYZE_HISTORY_API_URL = "http://localhost:8000/api/analyze-history";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const HISTORY_API_URL = `${BASE_URL}/api/history`;
+const ANALYZE_HISTORY_API_URL = `${BASE_URL}/api/analyze-history`;
 
 const PERIOD_FILTERS = [
   { key: "daily", label: "Hari Ini", icon: Clock },
