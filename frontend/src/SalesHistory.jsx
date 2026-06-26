@@ -353,7 +353,7 @@ export default function SalesHistory({ history, guestId, token, onClearHistory, 
       onClearHistory();
     }else if (confirmDialog.type === "single"){
       try{
-        const res = await fetch(`${HISTORY_API_URL}/${confirmDialog}`,{
+        const res = await fetch(`${HISTORY_API_URL}/${confirmDialog.id}`,{
           method: "DELETE",
           headers: token? {
             "Authorization" : `Bearer ${token}`
