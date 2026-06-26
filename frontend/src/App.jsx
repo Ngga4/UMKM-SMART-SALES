@@ -203,35 +203,34 @@ export default function App() {
       recognition.continuous = true;
       recognition.maxAlternatives = 1;
 
-      let finalTranscript = "";
+      // let finalTranscript = "";
       let baseText = "";
 
-      // Saat mic pertama kali menyala, simpan teks ketikan sebelumnya
       recognition.onstart = () => {
-        finalTranscript = "";
         baseText = inputTextRef.current;
       };
 
       recognition.onresult = (event) => {
-        let interimTranscript = "";
+        let currentFinal = "";
+        let currentInterim = "";
 
-        // Pisahkan teks yang sudah final dan yang masih ragu-ragu (interim)
-        for (let i = event.resultIndex; i < event.results.length; i++) {
+        // Ubah i = event.resultIndex menjadi i = 0 
+        // Ini memaksa React membaca dari awal sehingga tidak pernah ada kata dobel!
+        for (let i = 0; i < event.results.length; i++) {
           if (event.results[i].isFinal) {
-            finalTranscript += event.results[i][0].transcript + " ";
+            currentFinal += event.results[i][0].transcript + " ";
           } else {
-            interimTranscript += event.results[i][0].transcript;
+            currentInterim += event.results[i][0].transcript;
           }
         }
 
-        // Rangkai ulang semuanya: Teks Manual + Teks Final + *Teks Sementara*
         let combined = baseText;
         if (combined && !combined.endsWith(" ")) combined += " ";
         
-        combined += finalTranscript;
+        combined += currentFinal;
         
-        if (interimTranscript) {
-          combined += " *" + interimTranscript.trim() + "*";
+        if (currentInterim) {
+          combined += " *" + currentInterim.trim() + "*";
         }
         
         setInputText(combined.trim());
