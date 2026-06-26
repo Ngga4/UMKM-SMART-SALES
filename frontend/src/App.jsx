@@ -180,7 +180,6 @@ export default function App() {
   }, [fetchHistory]);
 
   /* --- Voice-to-Text state --- */
-    /* --- Voice-to-Text state --- */
   const [isListening, setIsListening] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(
     !!(window.SpeechRecognition || window.webkitSpeechRecognition)
@@ -322,49 +321,54 @@ export default function App() {
 
   return (
     <div className="app-container">
-      {/* ======= HEADER ======= */}
       <header className="app-header">
-        <div className="header-actions" style={{ display: "flex", justifyContent: "center", gap: "1rem", alignItems: "center", marginBottom: "1rem", flexWrap: "wrap" }}>
+          <div className="header-actions" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.8rem", marginBottom: "1.5rem" }}>
+          
           <div className="header-badge" style={{ marginBottom: 0 }}>
             <span className="badge-dot" />
             Powered by Groq AI
           </div>
 
-          {user ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <div className="header-badge" style={{ marginBottom: 0, background: 'rgba(20, 184, 166, 0.1)', color: '#14b8a6', border: '1px solid rgba(20, 184, 166, 0.2)' }}>
-                <UserCircle size={14} style={{ marginRight: 6 }} />
-                {user.store_name}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", justifyContent: "center", flexWrap: "wrap" }}>
+            
+            {user ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <div className="header-badge" style={{ marginBottom: 0, background: 'rgba(20, 184, 166, 0.1)', color: '#14b8a6', border: '1px solid rgba(20, 184, 166, 0.2)' }}>
+                  <UserCircle size={14} style={{ marginRight: 6 }} />
+                  {user.store_name}
+                </div>
+                <button 
+                  className="theme-toggle" 
+                  onClick={() => {
+                    localStorage.removeItem("umkm_token");
+                    setUser(null);
+                    fetchHistory();
+                  }}
+                  title="Logout"
+                >
+                  <LogOut size={18} />
+                </button>
               </div>
+            ) : (
               <button 
                 className="theme-toggle" 
-                onClick={() => {
-                  localStorage.removeItem("umkm_token");
-                  setUser(null);
-                  fetchHistory();
-                }}
-                title="Logout"
+                style={{ padding: '0.5rem 1rem', borderRadius: '0.75rem', width: 'auto', background: 'var(--color-bg-secondary)', fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-text-primary)' }}
+                onClick={() => setShowAuthModal(true)}
               >
-                <LogOut size={18} />
+                Login / Daftar
               </button>
-            </div>
-          ) : (
+            )}
+
+            {/* Tombol Tema */}
             <button 
               className="theme-toggle" 
-              style={{ padding: '0.5rem 1rem', borderRadius: '0.75rem', width: 'auto', background: 'var(--color-bg-secondary)', fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-text-primary)' }}
-              onClick={() => setShowAuthModal(true)}
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
             >
-              Login / Daftar
+              {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
             </button>
-          )}
-
-          <button 
-            className="theme-toggle" 
-            onClick={toggleTheme}
-            aria-label="Toggle theme"
-          >
-            {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
-          </button>
+            
+          </div>
         </div>
         <h1 className="app-title">UMKM Smart Sales</h1>
         <p className="app-subtitle">

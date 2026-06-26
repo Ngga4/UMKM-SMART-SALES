@@ -374,11 +374,21 @@
 }
 
 /* ----------------------------------------------------------------
-   Table
+   Responsive (Mobile & Tablet) - Tampilan Premium
    ---------------------------------------------------------------- */
 @media (max-width: 640px) {
+  /* 1. Tombol Filter (Hari/Bulan/Tahun) dibuat Grid 3 kolom agar rapi dan hemat tempat */
   .period-tabs {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 4px;
+    gap: 2px;
+  }
+  
+  .period-tab {
+    flex-direction: column; /* Ikon di atas, teks di bawah */
+    padding: 0.5rem 0;
+    font-size: 0.75rem;
   }
 
   .period-info {
@@ -391,26 +401,82 @@
     flex-direction: column;
   }
 
+  .ai-analyze-btn,
   .download-btn,
   .clear-btn {
     justify-content: center;
     width: 100%;
   }
 
+    /* 2. TABEL DIBUAT PAS DI LAYAR HP (TANPA SCROLL) */
   .history-table-card {
-    padding: var(--space-md);
+    padding: var(--space-md) var(--space-xs); /* Memepetkan pinggiran kartu ke batas layar */
+    overflow: hidden; /* Matikan fungsi scroll */
+    border-radius: var(--radius-lg);
   }
 
+  .history-table {
+    width: 100%;
+    min-width: 0; /* Hapus paksaan lebar agar bisa mengecil sesuai layar HP */
+  }
+
+  /* Mengecilkan font dan ruang kosong di dalam kotak tabel */
+  .history-table thead th {
+    font-size: 0.65rem; 
+    padding: 6px 2px;
+  }
+
+  .history-table tbody td {
+    font-size: 0.78rem; 
+    padding: 8px 2px;
+  }
+
+  .history-table tfoot td {
+    padding: 8px 2px;
+  }
+  
+  /* Menyesuaikan ukuran font total di bagian bawah tabel */
+  .total-label {
+    font-size: 0.7rem !important;
+  }
+  
+  .total-value {
+    font-size: 0.9rem !important;
+  }
+
+    /* 3. Modal Edit Item Dibuat Sebaris (Tanpa Turun) */
   .modal-item-row {
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* Matikan efek turun baris */
+    gap: 4px; /* Rapatkan jarak antar kotak */
   }
 
-  .modal-input--name {
-    flex: 1 1 100%;
+  .modal-item-num {
+    min-width: 12px;
+    font-size: 0.7rem;
+  }
+
+  .modal-input {
+    padding: 6px 4px;
+    font-size: 0.7rem; /* Kecilkan huruf agar pas */
+    min-width: 0; /* WAJIB: agar kotak bisa menyusut mengikuti layar HP */
+  }
+
+  /* Pembagian jatah proporsi lebar layar */
+  .modal-input--name { flex: 2; }
+  .modal-input--qty { flex: 0.7; }
+  .modal-input--unit { flex: 0.8; }
+  .modal-item-row > input:nth-child(5) { flex: 1.2; } /* Input Harga */
+
+  .modal-remove-btn {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    flex-shrink: 0; /* Tombol minus (hapus) tidak boleh menyusut */
   }
 
   .modal-content {
-    margin: var(--space-md);
+    margin: var(--space-xs); /* Tipiskan jarak kiri-kanan popup */
+    padding: var(--space-md);
     max-height: 90vh;
   }
 }

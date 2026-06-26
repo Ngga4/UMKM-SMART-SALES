@@ -793,5 +793,27 @@
   .sales-table {
     font-size: 0.85rem;
   }
+
+    /* MENGECILKAN TABEL DETAIL PENJUALAN AGAR MUAT DI LAYAR HP */
+  .table-card {
+    padding: var(--space-md) var(--space-xs);
+    overflow: hidden;
+  }
+
+  .sales-table {
+    width: 100%;
+    min-width: 0;
+    font-size: 0.75rem;
+  }
+
+  .sales-table thead th {
+    font-size: 0.65rem;
+    padding: 6px 2px;
+  }
+
+  .sales-table tbody td {
+    font-size: 0.78rem;
+    padding: 8px 2px;
+  }
 }
 
