@@ -212,11 +212,11 @@ export default function App() {
     recognition.interimResults = true;
     
     // Cek apakah user pakai HP (Android/iOS)
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    // const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
     // Di HP, mode continuous sering ngawur, jadi kita matikan. 
     // Di Laptop tetap continuous agar enak.
-    recognition.continuous = !isMobile; 
+    recognition.continuous = true; 
     recognition.maxAlternatives = 1;
 
     let baseText = inputTextRef.current;
