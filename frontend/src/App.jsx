@@ -180,15 +180,86 @@ export default function App() {
   }, [fetchHistory]);
 
   /* --- Voice-to-Text state --- */
+    /* --- Voice-to-Text state --- */
   const [isListening, setIsListening] = useState(false);
-  const [speechSupported, setSpeechSupported] = useState(true);
+  const [speechSupported, setSpeechSupported] = useState(
+    !!(window.SpeechRecognition || window.webkitSpeechRecognition)
+  );
   const recognitionRef = useRef(null);
-
   const inputTextRef = useRef("");
 
-  useEffect(() =>{
+  useEffect(() => {
     inputTextRef.current = inputText;
   }, [inputText]);
+
+  /* --- Toggle voice listening --- */
+  const toggleListening = useCallback(() => {
+    // 1. Jika sedang menyala, matikan.
+    if (isListening) {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+      setIsListening(false);
+      return;
+    }
+
+    // 2. Jika baru mau menyala, BUAT MESIN BARU AGAR INGATAN HP TERHAPUS!
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "id-ID";
+    recognition.interimResults = true;
+    
+    // Cek apakah user pakai HP (Android/iOS)
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    // Di HP, mode continuous sering ngawur, jadi kita matikan. 
+    // Di Laptop tetap continuous agar enak.
+    recognition.continuous = !isMobile; 
+    recognition.maxAlternatives = 1;
+
+    let baseText = inputTextRef.current;
+
+    recognition.onresult = (event) => {
+      let currentFinal = "";
+      let currentInterim = "";
+
+      for (let i = 0; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          currentFinal += event.results[i][0].transcript + " ";
+        } else {
+          currentInterim += event.results[i][0].transcript;
+        }
+      }
+
+      let combined = baseText;
+      if (combined && !combined.endsWith(" ")) combined += " ";
+      
+      combined += currentFinal;
+      if (currentInterim) {
+        combined += " *" + currentInterim.trim() + "*";
+      }
+      
+      setInputText(combined.trim());
+    };
+
+    recognition.onerror = (event) => {
+      console.error("Speech recognition error:", event.error);
+      if (event.error !== "aborted") {
+        setIsListening(false);
+      }
+    };
+
+    recognition.onend = () => {
+      // Mesin mati (entah karena user menekan tombol, atau HP mematikan otomatis karena user diam)
+      setIsListening(false);
+    };
+
+    recognitionRef.current = recognition;
+    recognition.start();
+    setIsListening(true);
+  }, [isListening]);
 
   /* --- Detect Web Speech API support --- */
   useEffect(() => {
