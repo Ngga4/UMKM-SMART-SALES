@@ -8,8 +8,6 @@ import os
 import re
 from contextlib import asynccontextmanager
 
-from google import genai
-from google.genai import types
 from groq import Groq
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Depends, Header
