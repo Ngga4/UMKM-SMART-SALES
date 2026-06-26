@@ -184,6 +184,12 @@ export default function App() {
   const [speechSupported, setSpeechSupported] = useState(true);
   const recognitionRef = useRef(null);
 
+  const inputTextRef = useRef("");
+
+  useEffect(() =>{
+    inputTextRef.current = inputText;
+  }, [inputText]);
+
   /* --- Detect Web Speech API support --- */
   useEffect(() => {
     const SpeechRecognition =
@@ -197,34 +203,38 @@ export default function App() {
       recognition.continuous = true;
       recognition.maxAlternatives = 1;
 
-      recognition.onresult = (event) => {
-        let teksSelesai = "";
-        let teksSementara = "";
+      let finalTranscript = "";
+      let baseText = "";
 
-        // Looping semua kata yang ditangkap browser
-        for(let i = event.resultIndex; i < event.results.length; i++){
-          if(event.results[i].isFinal){
-            teksSelesai += event.results[i][0].transcript + " ";
-          }else{
-            teksSementara += event.results[i][0].transcript;
+      // Saat mic pertama kali menyala, simpan teks ketikan sebelumnya
+      recognition.onstart = () => {
+        finalTranscript = "";
+        baseText = inputTextRef.current;
+      };
+
+      recognition.onresult = (event) => {
+        let interimTranscript = "";
+
+        // Pisahkan teks yang sudah final dan yang masih ragu-ragu (interim)
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript + " ";
+          } else {
+            interimTranscript += event.results[i][0].transcript;
           }
         }
 
-        // gabungkan teks lama
-        setInputText((prev) => {
-          const textAman = prev || "";
-          const teksLamaBersih = textAman.replace(/\s*\*.*?\*$/, "");
-          let hasilAkhir = teksLamaBersih;
-
-          if (teksSelesai.trim()) {
-            hasilAkhir += " " + teksSelesai.trim();
-          }
-          
-          if (teksSementara.trim()) {
-            hasilAkhir += " *" + teksSementara.trim() + "*";
-          }
-          return hasilAkhir.trim();
-        })
+        // Rangkai ulang semuanya: Teks Manual + Teks Final + *Teks Sementara*
+        let combined = baseText;
+        if (combined && !combined.endsWith(" ")) combined += " ";
+        
+        combined += finalTranscript;
+        
+        if (interimTranscript) {
+          combined += " *" + interimTranscript.trim() + "*";
+        }
+        
+        setInputText(combined.trim());
       };
 
       recognition.onerror = (event) => {
